@@ -12,8 +12,6 @@ import {
 import {
   DayPicker,
   DayPickerSingleProps,
-  useActiveModifiers,
-  useDayPicker,
   useNavigation,
 } from "react-day-picker";
 
@@ -21,9 +19,11 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { format } from "date-fns";
 import { TimePickerInput } from "../custom/time-picker/time-picker-input";
-import { Label } from "./label";
 
-export type DatetimePickerProps = Omit<DayPickerSingleProps, "mode" | "onSelect"> & {
+export type DatetimePickerProps = Omit<
+  DayPickerSingleProps,
+  "mode" | "onSelect"
+> & {
   setDate: (date: Date) => void;
 };
 
@@ -31,32 +31,32 @@ function DatetimePicker({
   className,
   classNames,
   showOutsideDays = true,
-  setDate,
+  setDate: setGlobalDate,
   ...props
 }: DatetimePickerProps) {
   const minuteRef = React.useRef<HTMLInputElement>(null);
   const hourRef = React.useRef<HTMLInputElement>(null);
   const { selected: selectedDate } = props as { selected: Date };
-  const _setDate = (dateInput: Date) => {
+  const setDate = (dateInput: Date) => {
     const date = new Date(selectedDate);
     date.setDate(dateInput.getDate());
     date.setMonth(dateInput.getMonth());
     date.setFullYear(dateInput.getFullYear());
-    setDate(date);
+    setGlobalDate(date);
   };
   const setTime = (dateInput: Date | undefined) => {
     if (!dateInput) return;
     const time = new Date(selectedDate);
     time.setHours(dateInput.getHours());
     time.setMinutes(dateInput.getMinutes());
-    setDate(time);
+    setGlobalDate(time);
   };
   return (
     <>
       <DayPicker
         mode="single"
         selected={selectedDate}
-        onSelect={_setDate as any}
+        onSelect={setDate as any}
         showOutsideDays={showOutsideDays}
         className={cn("py-3", className)}
         classNames={{
@@ -108,7 +108,7 @@ function DatetimePicker({
                       onClick={() => {
                         const chosenDate = new Date();
                         goToDate(chosenDate);
-                        _setDate(chosenDate);
+                        setDate(chosenDate);
                       }}
                     >
                       <div className="flex">
@@ -128,7 +128,7 @@ function DatetimePicker({
                         const chosenDate = new Date();
                         chosenDate.setDate(chosenDate.getDate() + 1);
                         goToDate(chosenDate);
-                        _setDate(chosenDate);
+                        setDate(chosenDate);
                       }}
                     >
                       <div className="flex">
@@ -152,7 +152,7 @@ function DatetimePicker({
                           const chosenDate = new Date();
                           chosenDate.setDate(chosenDate.getDate() + 7);
                           goToDate(chosenDate);
-                          _setDate(chosenDate);
+                          setDate(chosenDate);
                         }}
                       >
                         <div className="flex">
